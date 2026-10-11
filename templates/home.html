@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Alumni Tracking & Career Advancement Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --macfast-maroon: #6B0000; 
+            --macfast-dark-maroon: #4A0000;
+            --macfast-gold: #FFC107;
+            --macfast-bg: #F8F9FA;
+        }
+        
+        body { background-color: var(--macfast-bg); font-family: 'Segoe UI', system-ui, sans-serif; color: #333; }
+
+        .navbar-macfast {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            border-bottom: 3px solid var(--macfast-gold);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            color: white;
+            padding: 80px 0 100px 0;
+            border-bottom: 5px solid var(--macfast-gold);
+        }
+
+        .macfast-card {
+            background: #ffffff;
+            border: 1px solid rgba(107, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .macfast-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(107, 0, 0, 0.15);
+        }
+
+        .role-icon-circle {
+            width: 70px;
+            height: 70px;
+            background-color: #F8F9FA;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto;
+            color: var(--macfast-maroon);
+            font-size: 1.8rem;
+        }
+
+        .text-macfast { color: var(--macfast-maroon) !important; }
+
+        .btn-macfast-gold {
+            background-color: var(--macfast-gold);
+            color: #000;
+            font-weight: 700;
+            border-radius: 30px;
+            padding: 10px 28px;
+        }
+
+        .btn-macfast-gold:hover {
+            background-color: #e0a800;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-macfast px-4 py-2 sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{% url 'home' %}">
+            <i class="fa-solid fa-graduation-cap text-warning me-2 fs-2"></i>
+            <span>Global Alumni Tracking & Career Advancement Portal</span>
+        </a>
+        <div class="ms-auto d-flex gap-2">
+            {% if user.is_authenticated %}
+                <a href="{% url 'alumni_dashboard' %}" class="btn btn-warning rounded-pill fw-bold px-4">Dashboard</a>
+            {% else %}
+                <a href="{% url 'alumni_login' %}" class="btn btn-outline-light rounded-pill px-4">Login</a>
+                <a href="{% url 'alumni_register' %}" class="btn btn-warning rounded-pill fw-bold px-4 text-dark">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Global Alumni Tracking & Career Advancement Portal</h1>
+        <p class="lead col-md-9 mx-auto mb-4 text-white-50">Empowering Career Growth & Uniting Students, Faculty, and Alumni Worldwide</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'alumni_register' %}" class="btn btn-macfast-gold shadow"><i class="fa-solid fa-user-plus me-1"></i> Join Network</a>
+            <a href="{% url 'alumni_login' %}" class="btn btn-outline-light rounded-pill px-4 fw-bold py-2"><i class="fa-solid fa-right-to-bracket me-1"></i> Member Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- Community Feature Cards (Replaces the plain counts) -->
+<div class="container my-5" style="margin-top: -50px !important;">
+    <div class="row g-4 text-center">
+        <!-- Students Card -->
+        <div class="col-md-4">
+            <div class="card macfast-card p-4 h-100">
+                <div class="role-icon-circle">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">Students</h4>
+                <p class="text-muted small">Access mentorship, placement guidance, and leverage the career network built by global alumni.</p>
+            </div>
+        </div>
+
+        <!-- Faculty Card -->
+        <div class="col-md-4">
+            <div class="card macfast-card p-4 h-100">
+                <div class="role-icon-circle">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">Faculty</h4>
+                <p class="text-muted small">Guide current students, track career trajectories of graduates, and foster academic collaborations.</p>
+            </div>
+        </div>
+
+        <!-- Global Alumni Card -->
+        <div class="col-md-4">
+            <div class="card macfast-card p-4 h-100">
+                <div class="role-icon-circle">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">Global Alumni</h4>
+                <p class="text-muted small">Stay connected globally, share career opportunities, mentor juniors, and engage with your alma mater.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Announcements & Events -->
+<div class="container my-5">
+    <div class="row g-4">
+        <!-- Announcements -->
+        <div class="col-md-6">
+            <h4 class="fw-bold text-macfast mb-3"><i class="fa-solid fa-bullhorn me-2 text-warning"></i>Recent Announcements</h4>
+            {% for a in announcements %}
+                <div class="card macfast-card p-3 mb-3">
+                    <h5 class="fw-bold text-dark m-0">{{ a.title }}</h5>
+                    <small class="text-muted"><i class="fa-regular fa-clock me-1 text-warning"></i>{{ a.created_at|date:"M d, Y" }}</small>
+                    <p class="text-secondary small mt-2 m-0">{{ a.content }}</p>
+                </div>
+            {% empty %}
+                <div class="p-4 bg-white rounded-3 text-center text-muted card macfast-card">No announcements posted yet.</div>
+            {% endfor %}
+        </div>
+        <!-- Events -->
+        <div class="col-md-6">
+            <h4 class="fw-bold text-macfast mb-3"><i class="fa-solid fa-calendar-days me-2 text-warning"></i>Campus Events</h4>
+            {% for e in events %}
+                <div class="card macfast-card p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="fw-bold text-dark m-0">{{ e.title }}</h5>
+                            <small class="text-muted"><i class="fa-solid fa-location-dot me-1 text-macfast"></i>{{ e.location }}</small>
+                        </div>
+                        <span class="badge bg-warning text-dark fw-bold">{{ e.date|date:"M d" }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="p-4 bg-white rounded-3 text-center text-muted card macfast-card">No events listed right now.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MACFAST Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --macfast-maroon: #6B0000; 
+            --macfast-dark-maroon: #4A0000;
+            --macfast-gold: #FFC107;
+            --macfast-bg: #F8F9FA;
+        }
+        
+        body { background-color: var(--macfast-bg); font-family: 'Segoe UI', system-ui, sans-serif; color: #333; }
+
+        .navbar-macfast {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            border-bottom: 3px solid var(--macfast-gold);
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(107, 0, 0, 0.25);
+            border-left: 8px solid var(--macfast-gold);
+        }
+
+        .macfast-card {
+            background: #ffffff;
+            border: 1px solid rgba(107, 0, 0, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .macfast-card:hover { transform: translateY(-5px); border-color: var(--macfast-maroon); box-shadow: 0 12px 25px rgba(107, 0, 0, 0.12); }
+
+        .btn-macfast-primary {
+            background-color: var(--macfast-maroon);
+            color: #ffffff;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .btn-macfast-primary:hover { background-color: var(--macfast-dark-maroon); color: #fff; }
+
+        .btn-macfast-gold {
+            background-color: var(--macfast-gold);
+            color: #000;
+            font-weight: 700;
+            border-radius: 30px;
+        }
+
+        .btn-macfast-gold:hover { background-color: #e0a800; color: #000; }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 12px auto;
+        }
+
+        .stat-icon-maroon { background: rgba(107, 0, 0, 0.1); color: var(--macfast-maroon); }
+        .stat-icon-gold { background: rgba(255, 193, 7, 0.2); color: #b38600; }
+        .stat-icon-dark { background: rgba(0, 0, 0, 0.08); color: #333; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-macfast px-4 py-2 sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{% url 'alumni_dashboard' %}">
+            <i class="fa-solid fa-graduation-cap text-warning me-2 fs-3"></i>
+            <span>MACFAST <span class="text-warning fs-6 fw-light">Portal</span></span>
+        </a>
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <a href="{% url 'alumni_directory' %}" class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="fa-solid fa-users me-1"></i> Directory</a>
+            <a href="{% url 'student_directory' %}" class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="fa-solid fa-user-graduate me-1"></i> Students</a>
+            <a href="{% url 'job_list' %}" class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="fa-solid fa-briefcase me-1"></i> Jobs</a>
+            <a href="{% url 'event_list' %}" class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="fa-solid fa-calendar-days me-1"></i> Events</a>
+            <a href="{% url 'inbox' %}" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold text-dark position-relative">
+                <i class="fa-solid fa-envelope me-1"></i> Messages
+                {% if messages_count > 0 %}<span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border">{{ messages_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-warning btn-sm rounded-pill px-3"><i class="fa-solid fa-user-pen me-1"></i> Profile</a>
+            <a href="{% url 'alumni_logout' %}" class="btn btn-dark btn-sm rounded-pill px-3 text-warning ms-1">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-5">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner p-4 p-md-5 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <span class="badge bg-warning text-dark fw-bold mb-3 text-uppercase"><i class="fa-solid fa-id-badge me-1"></i> {{ profile.role|default:"Member" }} Portal</span>
+                <h1 class="fw-bold display-6 mb-2">Welcome Back, {{ request.user.first_name|default:request.user.username }}! 👋</h1>
+                <p class="text-white-50 fs-6 mb-0">
+                    <i class="fa-solid fa-building-columns me-1 text-warning"></i> <strong>Department:</strong> {{ profile.department.name|default:"General" }}
+                    {% if profile.company %}| <i class="fa-solid fa-building me-1 text-warning ms-2"></i> <strong>Company:</strong> {{ profile.company }} ({{ profile.designation }}){% endif %}
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                {% if profile.role == 'faculty' %}
+                    <a href="{% url 'export_alumni_csv' %}" class="btn btn-warning fw-bold text-dark rounded-pill shadow-sm mb-2"><i class="fa-solid fa-file-csv me-1"></i> Export Alumni CSV</a>
+                {% elif profile.role == 'alumni' %}
+                    <a href="{% url 'add_job' %}" class="btn btn-warning fw-bold text-dark rounded-pill shadow-sm mb-2"><i class="fa-solid fa-plus me-1"></i> Post Job Opportunity</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        {% endfor %}
+    {% endif %}
+
+    {% if profile.role == 'faculty' %}
+    <!-- FACULTY TOOLS PANEL -->
+    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-user-shield text-danger me-2"></i>Faculty Management Panel</h5>
+    <div class="row g-4 mb-5">
+        <div class="col-md-12">
+            <div class="card macfast-card p-3 d-flex flex-row flex-wrap gap-2 justify-content-between align-items-center">
+                <span class="fw-bold text-dark"><i class="fa-solid fa-bolt text-warning me-2"></i>Quick Faculty Actions:</span>
+                <div>
+                    <a href="{% url 'add_job' %}" class="btn btn-sm btn-outline-danger rounded-pill fw-semibold"><i class="fa-solid fa-plus me-1"></i> Post Drive</a>
+                    <a href="{% url 'add_event' %}" class="btn btn-sm btn-outline-warning text-dark rounded-pill fw-semibold ms-2"><i class="fa-solid fa-calendar-plus me-1"></i> Host Event</a>
+                    <a href="{% url 'add_announcement' %}" class="btn btn-sm btn-outline-dark rounded-pill fw-semibold ms-2"><i class="fa-solid fa-bullhorn me-1"></i> Broadcast Notice</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card macfast-card p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-user-clock text-warning me-2"></i>Pending Student Registrations</h5>
+                <div class="list-group list-group-flush">
+                    {% for st in pending_students %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+                            <div>
+                                <strong class="text-dark">{{ st.user.first_name }}</strong>
+                                <div class="text-muted small">Reg No: {{ st.register_no }}</div>
+                            </div>
+                            <a href="{% url 'approve_student' st.id %}" class="btn btn-success btn-sm rounded-pill px-3 fw-bold"><i class="fa-solid fa-check me-1"></i> Approve</a>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small my-3 text-center">No pending student approvals!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card macfast-card p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-chart-pie text-danger me-2"></i>Institutional Overview</h5>
+                <div class="row text-center my-auto g-3">
+                    <div class="col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <h2 class="fw-bold text-danger m-0">{{ department_students_count }}</h2>
+                            <small class="text-muted">Approved Students</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <h2 class="fw-bold text-warning m-0">{{ alumni_count }}</h2>
+                            <small class="text-muted">Verified Alumni</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ALUMNI / STUDENT UNIQUE DASHBOARD STATS -->
+    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-compass text-danger me-2"></i>Quick Navigation & Network</h5>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="card macfast-card p-4 text-center h-100">
+                <div class="stat-icon stat-icon-maroon"><i class="fa-solid fa-user-graduate"></i></div>
+                <h3 class="fw-bold text-dark mb-1">{{ alumni_count }}</h3>
+                <h6 class="fw-semibold text-secondary mb-3">Alumni Network</h6>
+                <a href="{% url 'alumni_directory' %}" class="btn btn-macfast-primary rounded-pill w-100 py-2 btn-sm mt-auto"><i class="fa-solid fa-comments me-1"></i> Connect Alumni</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card macfast-card p-4 text-center h-100">
+                <div class="stat-icon stat-icon-gold"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="fw-bold text-dark mb-1">{{ students_count }}</h3>
+                <h6 class="fw-semibold text-secondary mb-3">Current Students</h6>
+                <a href="{% url 'student_directory' %}" class="btn btn-warning rounded-pill w-100 py-2 btn-sm fw-bold text-dark mt-auto"><i class="fa-solid fa-user-group me-1"></i> Student Directory</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card macfast-card p-4 text-center h-100">
+                <div class="stat-icon stat-icon-maroon"><i class="fa-solid fa-briefcase"></i></div>
+                <h3 class="fw-bold text-dark mb-1">{{ jobs_count }}</h3>
+                <h6 class="fw-semibold text-secondary mb-3">Career Openings</h6>
+                <a href="{% url 'job_list' %}" class="btn btn-outline-danger rounded-pill w-100 py-2 btn-sm fw-bold mt-auto"><i class="fa-solid fa-briefcase me-1"></i> Explore Jobs</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card macfast-card p-4 text-center h-100">
+                <div class="stat-icon stat-icon-dark"><i class="fa-solid fa-calendar-days"></i></div>
+                <h3 class="fw-bold text-dark mb-1">{{ events_count }}</h3>
+                <h6 class="fw-semibold text-secondary mb-3">Campus Events</h6>
+                <a href="{% url 'event_list' %}" class="btn btn-outline-dark rounded-pill w-100 py-2 btn-sm fw-bold mt-auto"><i class="fa-solid fa-calendar me-1"></i> View Events</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS & RECENT PLACEMENTS WIDGET -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card macfast-card p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-bullhorn text-warning me-2"></i>Campus Notices & Broadcasts</h5>
+                {% for a in announcements %}
+                    <div class="p-3 mb-2 rounded-3 bg-light border-start border-4 border-danger">
+                        <strong class="text-dark d-block">{{ a.title }}</strong>
+                        <small class="text-muted"><i class="fa-regular fa-clock me-1"></i>{{ a.created_at|date:"M d, Y" }}</small>
+                        <p class="text-secondary small mt-1 mb-0">{{ a.content }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-muted small my-3 text-center">No announcements broadcasted yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card macfast-card p-4 h-100">
+                <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-briefcase text-danger me-2"></i>Recent Career Opportunities</h5>
+                {% for j in recent_jobs %}
+                    <div class="p-3 mb-2 rounded-3 bg-light border-start border-4 border-warning d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="text-dark d-block">{{ j.title }}</strong>
+                            <small class="text-muted"><i class="fa-solid fa-building me-1"></i>{{ j.company }} | <i class="fa-solid fa-location-dot me-1"></i>{{ j.location }}</small>
+                        </div>
+                        <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-danger rounded-pill"><i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                {% empty %}
+                    <p class="text-muted small my-3 text-center">No job postings available right now.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

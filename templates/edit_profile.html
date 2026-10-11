@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - MACFAST Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --macfast-maroon: #6B0000; 
+            --macfast-dark-maroon: #4A0000;
+            --macfast-gold: #FFC107;
+            --macfast-bg: #F8F9FA;
+        }
+        
+        body { 
+            background-color: var(--macfast-bg); 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            color: #333;
+        }
+
+        .navbar-macfast {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            border-bottom: 3px solid var(--macfast-gold);
+        }
+
+        .edit-card {
+            background: #ffffff;
+            border: 1px solid rgba(107, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 35px;
+        }
+
+        .profile-img-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--macfast-gold);
+            box-shadow: 0 4px 10px rgba(107, 0, 0, 0.15);
+        }
+
+        .profile-img-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border: 4px solid var(--macfast-gold);
+            color: var(--macfast-maroon);
+            font-size: 3rem;
+        }
+
+        .btn-macfast-maroon {
+            background: linear-gradient(135deg, var(--macfast-maroon) 0%, var(--macfast-dark-maroon) 100%);
+            color: white;
+            font-weight: 700;
+            border-radius: 30px;
+            padding: 12px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-macfast-maroon:hover {
+            background: var(--macfast-dark-maroon);
+            color: var(--macfast-gold);
+            box-shadow: 0 4px 12px rgba(107, 0, 0, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #ced4da;
+        }
+
+        .form-control:focus {
+            border-color: var(--macfast-maroon);
+            box-shadow: 0 0 0 0.25rem rgba(107, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-macfast px-4 py-2 sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{% url 'alumni_dashboard' %}">
+            <i class="fa-solid fa-graduation-cap text-warning me-2 fs-3"></i>
+            <span>MACFAST <span class="text-warning fs-6 fw-light">Portal</span></span>
+        </a>
+        <a href="{% url 'alumni_dashboard' %}" class="btn btn-outline-light btn-sm rounded-pill px-3 ms-auto">
+            <i class="fa-solid fa-house me-1"></i> Dashboard
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="edit-card">
+        <h3 class="fw-bold text-center mb-4" style="color: var(--macfast-maroon);">
+            <i class="fa-solid fa-user-gear me-2 text-warning"></i>Edit Profile
+        </h3>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- enctype="multipart/form-data" added for Profile Picture uploads -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Profile Picture Section -->
+            <div class="text-center mb-4">
+                {% if profile.profile_pic %}
+                    <img src="{{ profile.profile_pic.url }}" alt="Profile Picture" class="profile-img-preview mb-3">
+                {% else %}
+                    <div class="profile-img-placeholder mb-3">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <label for="profile_pic" class="form-label text-danger d-block fw-bold mb-1">
+                        Upload Profile Picture
+                    </label>
+                    <input type="file" name="profile_pic" id="profile_pic" class="form-control form-control-sm w-75 mx-auto" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Basic Details -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ request.user.email }}" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ profile.phone|default:'' }}">
+                </div>
+                {% if profile.role == 'alumni' %}
+                <div class="col-md-6">
+                    <label class="form-label">Company</label>
+                    <input type="text" name="company" class="form-control" value="{{ profile.company|default:'' }}">
+                </div>
+                {% endif %}
+            </div>
+
+            {% if profile.role == 'alumni' %}
+            <div class="mb-4">
+                <label class="form-label">Designation</label>
+                <input type="text" name="designation" class="form-control" value="{{ profile.designation|default:'' }}">
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-macfast-maroon w-100 mt-2 shadow">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
